@@ -19,7 +19,9 @@ const cartSlice = createSlice({
                 state.cartItems = [...state.cartItems, item]
             }
             
-            return updateCart(state)
+            return updateCart(state)            
+        },
+        removeFromCart: (state, action) => {
             
         }
     }
