@@ -45,6 +45,45 @@ const OrderScreen = () => {
         }
     }, [order, paypal, paypalDispatch, loadingPayPal, errorPayPal])
 
+    function onApprove(data, actions) {
+        return actions.order.capture().then(async function (details) {
+            try {
+                await payOrder({ orderId, details })
+                refetch()
+                toast.success('Pagamento confirmado')
+            } catch (error) {
+                toast.error(error?.data?.message || error.message)
+            }
+        })
+    }
+
+    async function onApproveTest() {
+        await payOrder({ orderId, details: { payer: {} } })
+        refetch()
+        toast.success('Pagamento confirmado')
+    }
+    
+        function onError(error) {
+            toast.error(error.message)
+    
+        }
+
+    function createOrder(data, actions) {
+        return actions.order.create({
+            purchase_units: [
+                {
+                    amount: {
+                        value: order.totalPrice
+                    }
+                }
+            ]
+        }).then((orderId) => {
+            return orderId
+        })
+    }
+
+
+
     console.log(order)
 
 
@@ -149,9 +188,9 @@ const OrderScreen = () => {
 
                                         {isPending ? <Loader /> : (
                                             <div>
-                                                <Button onClick={ onApproveTeste } style={{marginBottom: '10px'}}>Test Pay Order</Button>
+                                                <Button onClick={ onApproveTest } style={{marginBottom: '10px'}}>Test Pay Order</Button>
                                                 <div>
-                                                    <PayPalButton createOrder={createOrder} onApprove={onApprove} onError={onError}></PayPalButton>
+                                                    <PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError}></PayPalButtons>
                                                 </div>
                                             </div>
                                         )}
