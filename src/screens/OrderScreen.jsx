@@ -6,7 +6,9 @@ import { useSelector } from 'react-redux'
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPaypalClientIdQuery } from '../slices/ordersApiSlice'
+import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPaypalClientIdQuery, useDeliverOrderMutation } from '../slices/ordersApiSlice'
+import {format} from 'date-fns'
+import ptBR from 'date-fns/locale/pt-BR'
 
 
 import React from 'react'
@@ -18,6 +20,8 @@ const OrderScreen = () => {
     const { data: order, refetch, isLoading, error } = useGetOrderDetailsQuery(orderId)
 
     const [ payOrder, { isLoading: loadingPay } ] = usePayOrderMutation()
+
+    const [ deliverOrder, { isLoading: loadingDeliver } ] = useDeliverOrderMutation()
 
     const [{ isPending }, paypalDispatch] = usePayPalScriptReducer()
 
@@ -83,8 +87,21 @@ const OrderScreen = () => {
     }
 
 
+    const deliverOrderHandler = async () => {
+        try {
+            await deliverOrder(orderId)
+            refetch()
+            toast.success('Pedido entregue')
+        } catch (err) {
+            toast.error(err?.data?.message || err.message)
+        }
+    }
 
-    console.log(order)
+    const formatDate = (date) => {
+        return format((date), "dd/MM/yyyy 'às' hh:mm:ss " , {
+            locale: ptBR,
+        })
+    }
 
 
   return isLoading ? <Loader /> : error ? <Message variant="danger" /> 
@@ -108,7 +125,7 @@ const OrderScreen = () => {
                                 </p>
                                 { order.isDelivered ? (
                                     <Message variant='success'>
-                                        Entregue em {order.isDelivered}
+                                        Entregue em {formatDate(order.deliveredAt)}
                                     </Message>
                                 ) : (
                                     <Message variant='danger'>Não entregue</Message>
@@ -199,8 +216,15 @@ const OrderScreen = () => {
                                     </ListGroup.Item>
                                 )}
 
-                                {/* MARK AS  DELEVERED */}
+                               {loadingDeliver && <Loader />}
 
+                               {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                                <ListGroup.Item>
+                                    <Button type='button' className='btn btn-block' onClick={deliverOrderHandler}>
+                                        Confirmar como entregue
+                                    </Button>
+                                </ListGroup.Item>
+                               )}
                     </ListGroup>
                 </Card>
             </Col>
