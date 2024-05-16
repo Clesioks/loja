@@ -1,6 +1,8 @@
 import { Card } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import Rating from "./Rating"
+import numeral from 'numeral'
+
 
 const Product = ( { product } ) => {
   return (
@@ -21,7 +23,7 @@ const Product = ( { product } ) => {
             </Card.Text>
 
             <Card.Text as="h3">
-                ${product.price}
+                {numeral(product.price).format('$ 0,0.00')}
             </Card.Text>
         </Card.Body>
 

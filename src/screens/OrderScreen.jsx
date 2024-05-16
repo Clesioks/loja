@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Row, Col, ListGroup, Image, Form, Button, Card } from 'react-bootstrap'
+import { Row, Col, ListGroup, Image, Button, Card } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import { useSelector } from 'react-redux'
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js'
@@ -9,7 +9,8 @@ import Loader from '../components/Loader'
 import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPaypalClientIdQuery, useDeliverOrderMutation } from '../slices/ordersApiSlice'
 import {format} from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR'
-
+import numeral from 'numeral'
+import { br } from 'numeral/locales/pt-br'
 
 import React from 'react'
 
@@ -61,11 +62,11 @@ const OrderScreen = () => {
         })
     }
 
-    async function onApproveTest() {
-        await payOrder({ orderId, details: { payer: {} } })
-        refetch()
-        toast.success('Pagamento confirmado')
-    }
+    // async function onApproveTest() {
+    //     await payOrder({ orderId, details: { payer: {} } })
+    //     refetch()
+    //     toast.success('Pagamento confirmado')
+    // }
     
         function onError(error) {
             toast.error(error.message)
@@ -102,6 +103,8 @@ const OrderScreen = () => {
             locale: ptBR,
         })
     }
+
+    numeral.locale('pt-br')
 
 
   return isLoading ? <Loader /> : error ? <Message variant="danger" /> 
@@ -179,7 +182,7 @@ const OrderScreen = () => {
                         <ListGroup.Item>
                                 <Row>
                                     <Col>Itens</Col>
-                                    <Col>R${order.itemsPrice}</Col>
+                                    <Col>{(order.itemsPrice)}</Col>
                                 </Row>
 
                                 <Row>
@@ -189,12 +192,14 @@ const OrderScreen = () => {
 
                                 <Row>
                                     <Col>Imposto</Col>
-                                    <Col>R${order.taxPrice}</Col>
+                                    <Col>{numeral(order.taxPrice).format('$ 0,0.00')}</Col>
                                 </Row>
 
                                 <Row>
                                     <Col>Total</Col>
-                                    <Col>R${order.totalPrice}</Col>
+                                    <Col>
+                                    {numeral(order.totalPrice).format('$ 0,0.00')}
+                                    </Col>
                                 </Row>
 
                         </ListGroup.Item>
