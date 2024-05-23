@@ -10,6 +10,7 @@ import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPaypalClientIdQuery
 import {format} from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR'
 import numeral from 'numeral'
+// eslint-disable-next-line no-unused-vars
 import { br } from 'numeral/locales/pt-br'
 
 import React from 'react'
