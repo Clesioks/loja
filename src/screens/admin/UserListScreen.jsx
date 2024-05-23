@@ -1,14 +1,16 @@
 import { LinkContainer } from "react-router-bootstrap";
-import { Table, Button } from 'react-bootstrap'
+import { Table, Button, Row, Col } from 'react-bootstrap'
 import { FaTimes, FaTrash, FaEdit, FaCheck } from "react-icons/fa";
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
 import {toast} from 'react-toastify'
-import { useGetUsersQuery, useDeleteUserMutation } from "../../slices/userApiSlice";
+import { useGetUsersQuery, useDeleteUserMutation, useCreateUserMutation } from "../../slices/userApiSlice";
 
 const UserListScreen = () => {
 
   const { data: users, refetch, isLoading, error } = useGetUsersQuery()
+
+  const [createUser,{ isLoading: loadingCreate }] = useCreateUserMutation()
 
   const [deleteUser, { isLoading: loadingDelete } ]  = useDeleteUserMutation()
 
@@ -24,10 +26,34 @@ const UserListScreen = () => {
     }
 
   }  
+
+  const createUserHandler = async () => {
+    if(window.confirm('Tem certeza que deseja gerar novo usuário?')) {
+          try {
+            await createUser()          
+           toast.success('Usuário criado')
+            refetch()
+          } catch (err) {
+            toast.error(err?.data?.message || err.error)
+          }
+    }
+
+  }
   
   return (
     <>
+    <Row className="align-items-center">
+      <Col>
       <h1>Usuários</h1>
+      </Col>
+      <Col className="text-end">
+      <Button className="btn-sm m-3" onClick={createUserHandler}>
+        <FaEdit /> Criar usuário
+        </Button>
+      </Col>
+    </Row>
+
+      {loadingCreate && <Loader />}
       {loadingDelete && <Loader />}
       {isLoading ? (
         <Loader />
