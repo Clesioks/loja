@@ -60,8 +60,8 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         }),
         createUser: builder.mutation({
             query: () => ({
-                url: USERS_URL,
-                method: 'POST',             
+                url: `${USERS_URL}`,
+                method: 'POST',   
             }),
             invalidatesTags: ['User'],
         }),
