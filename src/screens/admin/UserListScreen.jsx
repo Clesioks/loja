@@ -30,7 +30,7 @@ const UserListScreen = () => {
   const createUserHandler = async () => {
     if(window.confirm('Tem certeza que deseja gerar novo usuário?')) {
           try {
-            await createUser().unwrap()          
+            await createUser().unwrap()      
            toast.success('Usuário criado')
             refetch()
           } catch (err) {
