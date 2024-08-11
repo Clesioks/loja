@@ -13,6 +13,7 @@
     "bootstrap": "^5.3.3",
     "date-fns": "^3.6.0",
     "numeral": "^2.0.6",
+    "proshop-v2": "file:..",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.1",
     "react-dom": "^18.2.0",
